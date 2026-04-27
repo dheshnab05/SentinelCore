@@ -10,7 +10,7 @@ client = ollama.Client(
 def execute(task, content):
 
     if task == "summarize":
-
+       task = task.strip().lower()
        prompt = f"""
 You must summarize ONLY the email below.
 
