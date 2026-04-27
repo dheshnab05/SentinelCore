@@ -5,7 +5,7 @@ import re
 
 # Reusable remote Ollama client
 client = ollama.Client(
-    host="https://4910-162-216-141-56.ngrok-free.app"
+    host="https://fc10-162-216-141-56.ngrok-free.app"
 )
 
 
@@ -104,8 +104,8 @@ Email:
         print("Intent detector failed:", e)
 
         return {
-            "malicious": True,
-            "trust_score": 2,
-            "types": ["Detection Failure"],
-            "reason": "LLM unavailable or invalid response"
-        }
+    "malicious": False,
+    "trust_score": 5,
+    "types": ["Unknown"],
+    "reason": "LLM unavailable"
+}
