@@ -10,39 +10,41 @@ client = ollama.Client(
 def execute(task, content):
 
     if task == "summarize":
-       task = task.strip().lower()
-       prompt = f"""
-You must summarize ONLY the email below.
 
-CRITICAL RULES:
-1. Use only facts written in the email.
-2. Do not invent meetings, dates, or tasks.
-3. Do not create examples.
-4. Ignore greetings and signatures.
-5. If information is missing, do not add it.
+        prompt = f"""
+Summarize the following email.
 
-TASK:
-Convert the email into 3 concise bullet points.
+STRICT RULES:
+- Use ONLY the email content.
+- Do NOT invent facts.
+- Do NOT assume anything.
+- Ignore greetings (like Dear Team, Hello).
+- Ignore signatures (like Regards, Best regards).
+- Focus only on actual message content.
 
-EMAIL CONTENT START
+Return exactly in this format:
+
+Summary:
+- point 1
+- point 2
+- point 3
+- point 4 (if needed)
+
+Email:
 {content}
-EMAIL CONTENT END
-
-Return only bullet points.
 """
 
-       response = client.chat(
-       model="qwen2.5:3b",
-       messages=[
-        {
-            "role": "user",
-            "content": prompt
-        }
-    ],
-    options={
-        "temperature": 0
-    }
-)
+        response = client.chat(
+            model="qwen2.5:3b",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
+
+        return response["message"]["content"]
 
     elif task == "reply":
 
