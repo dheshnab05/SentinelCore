@@ -12,23 +12,12 @@ def execute(task, content):
     if task == "summarize":
 
         prompt = f"""
-Summarize the following email.
+Summarize this email into 3 short bullet points.
 
-STRICT RULES:
-- Use ONLY the email content.
-- Do NOT invent facts.
-- Do NOT assume anything.
-- Ignore greetings (like Dear Team, Hello).
-- Ignore signatures (like Regards, Best regards).
-- Focus only on actual message content.
-
-Return exactly in this format:
-
-Summary:
-- point 1
-- point 2
-- point 3
-- point 4 (if needed)
+Include:
+- sender (if identifiable)
+- main purpose of the email
+- important action or next step
 
 Email:
 {content}
@@ -50,11 +39,6 @@ Email:
 
         prompt = f"""
 Write a professional reply for this email.
-
-Rules:
-- Be polite
-- Be short
-- Stay relevant to the email
 
 Email:
 {content}
