@@ -38,20 +38,19 @@ Email:
     elif task == "reply":
 
       prompt = f"""
-Write a direct email reply to the given email.
+Write a natural reply to this email.
 
 Rules:
-- Reply ONLY to the email content.
-- Understand the sender's message first.
-- Keep the reply short and relevant.
-- Do NOT create a new subject line.
-- Do NOT invent context.
-- Do NOT use placeholders like [Sender Name].
-- Match the tone of the original email.
-- If the email is appreciation, respond with thanks.
-- If the email asks for something, respond accordingly.
-
-Return only the reply body.
+- Understand what the sender is asking.
+- Reply as the receiver of the email.
+- If sender asks for review/feedback, acknowledge and confirm action.
+- If sender shares an update, acknowledge it naturally.
+- If sender appreciates, thank them.
+- Keep reply short (2-4 lines).
+- No subject line.
+- No placeholders.
+- No extra formal template.
+- Return only the reply text.
 
 Email:
 {content}
