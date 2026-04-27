@@ -11,40 +11,38 @@ def execute(task, content):
 
     if task == "summarize":
 
-        prompt = f"""
-Summarize the following email.
+       prompt = f"""
+You must summarize ONLY the email below.
 
-STRICT RULES:
-- Use ONLY the email content.
-- Do NOT invent facts.
-- Do NOT assume anything.
-- Ignore greetings (like Dear Team, Hello).
-- Ignore signatures (like Regards, Best regards).
-- Focus only on actual message content.
+CRITICAL RULES:
+1. Use only facts written in the email.
+2. Do not invent meetings, dates, or tasks.
+3. Do not create examples.
+4. Ignore greetings and signatures.
+5. If information is missing, do not add it.
 
-Return exactly in this format:
+TASK:
+Convert the email into 3 concise bullet points.
 
-Summary:
-- point 1
-- point 2
-- point 3
-- point 4 (if needed)
-
-Email:
+EMAIL CONTENT START
 {content}
+EMAIL CONTENT END
+
+Return only bullet points.
 """
 
-        response = client.chat(
-            model="qwen2.5:3b",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
-        )
-
-        return response["message"]["content"]
+       response = client.chat(
+       model="qwen2.5:3b",
+       messages=[
+        {
+            "role": "user",
+            "content": prompt
+        }
+    ],
+    options={
+        "temperature": 0
+    }
+)
 
     elif task == "reply":
 
