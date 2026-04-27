@@ -15,22 +15,24 @@ def execute(task, content):
     if task == "summarize":
 
         prompt = f"""
-Summarize the following email into simple short bullet points.
+Summarize this email clearly and briefly.
 
-STRICT RULES:
-- Use ONLY the email content provided below.
-- Do NOT invent anything.
-- Do NOT assume anything.
-- Do NOT mention anything not written in the email.
-- Keep it simple and human-readable.
+Rules:
+- Give the core message only
+- Use simple language
+- Maximum 5 bullet points
+- Ignore greetings and signatures
+- Ignore repeated lines
+- Focus only on important content
 
-Output format:
+Return format:
 
-• Sender:
-• Main purpose:
-• Action required:
+• Main purpose
+• Important updates
+• Required action (if any)
+• Deadlines (if any)
 
-EMAIL CONTENT:
+Email:
 {content}
 """
 
