@@ -12,14 +12,21 @@ def execute(task, content):
     if task == "summarize":
 
         prompt = f"""
-Summarize this email into 3 short bullet points.
+You are an email summarizer.
 
-Include:
-- sender (if identifiable)
-- main purpose of the email
-- important action or next step
+STRICT RULES:
+1. Use ONLY the email content provided.
+2. Do NOT invent information.
+3. Do NOT hallucinate.
+4. If sender is visible, extract it.
+5. Summarize in exactly 3 bullet points.
 
-Email:
+Format:
+
+- Sender: ...
+- Main points : ...
+
+EMAIL CONTENT:
 {content}
 """
 
