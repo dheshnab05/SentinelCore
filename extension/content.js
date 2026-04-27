@@ -194,7 +194,7 @@ function analyzeEmail(
     emailBody
 ) {
     fetch(
-        "http://127.0.0.1:5000/analyze",
+        "https://sentinel-core-q5qw.onrender.com/analyze",
         {
             method: "POST",
             headers: {
@@ -756,7 +756,7 @@ function runTask() {
         "Processing...";
 
     fetch(
-        "http://127.0.0.1:5000/task",
+        "https://sentinel-core-q5qw.onrender.com/task",
         {
             method: "POST",
             headers: {
