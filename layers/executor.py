@@ -1,9 +1,9 @@
 import ollama
 
 
-# Create reusable client
+# Reusable remote Ollama client
 client = ollama.Client(
-    host="https://39c7-162-216-141-56.ngrok-free.app  "
+    host="https://39c7-162-216-141-56.ngrok-free.app"
 )
 
 
@@ -15,8 +15,8 @@ def execute(task, content):
 Summarize this email into 3 short bullet points.
 
 Include:
-- who sent it (if identifiable)
-- what the email is mainly about
+- sender (if identifiable)
+- main purpose of the email
 - important action or next step
 
 Email:
@@ -24,7 +24,7 @@ Email:
 """
 
         response = client.chat(
-            model="phi3:mini",
+            model="qwen2.5:3b",
             messages=[
                 {
                     "role": "user",
@@ -45,7 +45,7 @@ Email:
 """
 
         response = client.chat(
-            model="phi3:mini",
+            model="qwen2.5:3b",
             messages=[
                 {
                     "role": "user",
