@@ -3,6 +3,12 @@ import json
 import re
 
 
+# Reusable Ollama client
+client = ollama.Client(
+    host="http://localhost:11434"
+)
+
+
 def detect_intent(email_text):
 
     prompt = f"""
@@ -34,16 +40,17 @@ Only mark malicious if:
 Return ONLY JSON:
 
 {{
-"malicious": false,
-"trust_score": 10,
-"types": [],
-"reason": ""
+    "malicious": false,
+    "trust_score": 10,
+    "types": [],
+    "reason": ""
 }}
 
 Email:
 {email_text}
 """
-    response = ollama.chat(
+
+    response = client.chat(
         model="qwen2.5:3b",
         messages=[
             {
@@ -55,6 +62,7 @@ Email:
 
     content = response["message"]["content"]
 
+    # Remove markdown wrappers
     content = re.sub(
         r"```json|```",
         "",
@@ -84,7 +92,7 @@ Email:
         }
 
     except Exception as e:
-     print("Intent detector failed:", e)
+        print("Intent detector failed:", e)
 
     return {
         "malicious": True,

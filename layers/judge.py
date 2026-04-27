@@ -3,6 +3,12 @@ import json
 import re
 
 
+# Reusable Ollama client
+client = ollama.Client(
+    host="http://localhost:11434"
+)
+
+
 # ---------------------------
 # FAST RULE-BASED CHECK
 # ---------------------------
@@ -30,7 +36,10 @@ def fast_judge(output):
         if pattern in text:
             return {
                 "safe": False,
-                "reason": f"Dangerous pattern detected: {pattern}"
+                "reason": (
+                    f"Dangerous pattern detected: "
+                    f"{pattern}"
+                )
             }
 
     return None
@@ -71,7 +80,7 @@ Output:
 {output}
 """
 
-    response = ollama.chat(
+    response = client.chat(
         model="qwen2.5:3b",
         messages=[
             {
@@ -90,13 +99,16 @@ Output:
     ).strip()
 
     try:
-        result = json.loads(content)
+        result = json.loads(
+            content
+        )
         return result
 
     except Exception:
         return {
             "safe": True,
-            "reason": "Judge parsing fallback"
+            "reason":
+            "Judge parsing fallback"
         }
 
 
@@ -106,10 +118,14 @@ Output:
 def judge_output(output):
 
     # First do fast rule-based check
-    fast_result = fast_judge(output)
+    fast_result = fast_judge(
+        output
+    )
 
     if fast_result:
         return fast_result
 
     # Only then use LLM judge
-    return llm_judge(output)
+    return llm_judge(
+        output
+    )

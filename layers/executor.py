@@ -1,6 +1,12 @@
 import ollama
 
 
+# Create reusable client
+client = ollama.Client(
+    host="http://localhost:11434"
+)
+
+
 def execute(task, content):
 
     if task == "summarize":
@@ -8,11 +14,16 @@ def execute(task, content):
         prompt = f"""
 Summarize this email into 3 short bullet points.
 
+Include:
+- who sent it (if identifiable)
+- what the email is mainly about
+- important action or next step
+
 Email:
 {content}
 """
 
-        response = ollama.chat(
+        response = client.chat(
             model="phi3:mini",
             messages=[
                 {
@@ -27,12 +38,13 @@ Email:
     elif task == "reply":
 
         prompt = f"""
-Write a professional reply:
+Write a professional reply for this email.
 
+Email:
 {content}
 """
 
-        response = ollama.chat(
+        response = client.chat(
             model="phi3:mini",
             messages=[
                 {

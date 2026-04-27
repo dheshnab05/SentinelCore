@@ -1,5 +1,12 @@
 import ollama
 
+
+# Reusable Ollama client
+client = ollama.Client(
+    host="http://localhost:11434"
+)
+
+
 def isolate(email_text):
 
     prompt = f"""
@@ -23,7 +30,7 @@ Email:
 {email_text}
 """
 
-    response = ollama.chat(
+    response = client.chat(
         model="qwen2.5:3b",
         messages=[
             {
