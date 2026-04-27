@@ -164,9 +164,14 @@ def task():
         # ---------------------------
         elif task_name == "simplify":
 
-            result = " ".join(
-                email_text.split()[:40]
-            ) + "..."
+          clean_email = isolate(
+          email_text
+    )
+
+          result = execute(
+        "simplify",
+        clean_email
+    )
 
         # ---------------------------
         # OTHER TASKS

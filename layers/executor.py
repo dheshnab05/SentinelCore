@@ -35,9 +35,47 @@ Email:
 
         return response["message"]["content"]
 
+    elif task == "simplify":
+
+        prompt = f"""
+Simplify this email into clear and meaningful points.
+
+Rules:
+- Understand the actual intent of the email.
+- Ignore greetings (Hello, Dear Team, etc.).
+- Ignore signatures (Regards, Best regards, etc.).
+- Extract only important information.
+- Convert into simple easy-to-read points.
+- Keep it short.
+- Do not rewrite the full email.
+- Do not invent details.
+
+Return format:
+
+Simplified:
+• point 1
+• point 2
+• point 3
+
+Email:
+{content}
+"""
+
+        response = client.chat(
+            model="qwen2.5:3b",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
+
+        return response["message"]["content"]
+
     elif task == "reply":
 
-      prompt = f"""
+        prompt = f"""
 Write a natural reply to this email.
 
 Rules:
@@ -56,14 +94,16 @@ Email:
 {content}
 """
 
-    response = client.chat(
-        model="qwen2.5:3b",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-    )
+        response = client.chat(
+            model="qwen2.5:3b",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
 
-    return response["message"]["content"]
+        return response["message"]["content"]
+
+    return "Unsupported task"
