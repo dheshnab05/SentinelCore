@@ -11,25 +11,22 @@ def execute(task, content):
 
     if task == "summarize":
 
+        
         prompt = f"""
-You are an email summarizer.
+Read the email and extract:
 
-STRICT RULES:
-1. Use ONLY the email content provided.
-2. Do NOT invent information.
-3. Do NOT hallucinate.
-4. If sender is visible, extract it.
-5. Summarize in exactly 3 bullet points.
+1. Who sent it
+2. What the email is about
+3. What action is requested
 
-Format:
+Use only direct facts from the email.
+No interpretation.
+No assumptions.
+No extra details.
 
-- Sender: ...
-- Main points : ...
-
-EMAIL CONTENT:
+Email:
 {content}
 """
-
         response = client.chat(
             model="qwen2.5:3b",
             messages=[
