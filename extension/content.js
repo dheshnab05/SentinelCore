@@ -110,7 +110,37 @@ function cleanEmailText(text) {
         .replace(/hide.*$/gim, "")
         .trim();
 }
+// -----------------------------
+// EXTRACT CURRENT EMAIL BODY
+// -----------------------------
+function extractCurrentEmail() {
+    const emailBodies = document.querySelectorAll(
+        "div.a3s.aiL"
+    );
 
+    if (!emailBodies.length) {
+        return "";
+    }
+
+    let fullText = "";
+
+    emailBodies.forEach((body) => {
+        fullText +=
+            body.innerText.trim() +
+            "\n\n";
+    });
+
+    fullText = cleanEmailText(
+        fullText
+    );
+
+    console.log(
+        "Fresh Extracted Email:",
+        fullText
+    );
+
+    return fullText.trim();
+}
 
 // -----------------------------
 // DETECT OPENED EMAIL
@@ -724,17 +754,18 @@ function runTask() {
             "statusText"
         );
 
-    if (
-        !selectedEmailText
-    ) {
-        output.innerText =
-            "Open an email first.";
+    const freshEmailText =
+    extractCurrentEmail();
 
-        statusText.innerText =
-            "No email selected";
+    if (!freshEmailText) {
+      output.innerText =
+        "Open an email first.";
 
-        return;
-    }
+     statusText.innerText =
+        "No email selected";
+
+    return;
+}
 
     if (
         currentEmailStatus ===
@@ -766,7 +797,7 @@ function runTask() {
             body: JSON.stringify({
                 command: cmd,
                 email:
-                    selectedEmailText
+                    freshEmailText
             })
         }
     )
