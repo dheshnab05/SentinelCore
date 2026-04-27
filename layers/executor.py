@@ -9,27 +9,38 @@ client = ollama.Client(
 
 def execute(task, content):
 
+    # Normalize content
+    content = content.strip()
+
     if task == "summarize":
 
-        
         prompt = f"""
-Read the email and extract:
+Summarize the following email into simple short bullet points.
 
-1. Who sent it
-2. What the email is about
-3. What action is requested
+STRICT RULES:
+- Use ONLY the email content provided below.
+- Do NOT invent anything.
+- Do NOT assume anything.
+- Do NOT mention anything not written in the email.
+- Keep it simple and human-readable.
 
-Use only direct facts from the email.
-No interpretation.
-No assumptions.
-No extra details.
+Output format:
 
-Email:
+• Sender:
+• Main purpose:
+• Action required:
+
+EMAIL CONTENT:
 {content}
 """
+
         response = client.chat(
             model="qwen2.5:3b",
             messages=[
+                {
+                    "role": "system",
+                    "content": "You are an email summarizer. Only summarize the provided content."
+                },
                 {
                     "role": "user",
                     "content": prompt
@@ -42,15 +53,25 @@ Email:
     elif task == "reply":
 
         prompt = f"""
-Write a professional reply for this email.
+Generate a professional email reply for this email.
 
-Email:
+RULES:
+- Reply only based on given email.
+- Be concise.
+- Be professional.
+- Do not add unrelated content.
+
+EMAIL CONTENT:
 {content}
 """
 
         response = client.chat(
             model="qwen2.5:3b",
             messages=[
+                {
+                    "role": "system",
+                    "content": "You are a professional email reply assistant."
+                },
                 {
                     "role": "user",
                     "content": prompt
