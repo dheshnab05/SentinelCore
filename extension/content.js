@@ -22,11 +22,18 @@ window.addEventListener("load", () => {
 // FLOATING BUTTON
 // -----------------------------
 function addFloatingButton() {
-    if (document.getElementById("ai-float-btn")) {
+    if (
+        document.getElementById(
+            "ai-float-btn"
+        )
+    ) {
         return;
     }
 
-    let btn = document.createElement("button");
+    let btn =
+        document.createElement(
+            "button"
+        );
 
     btn.id = "ai-float-btn";
     btn.innerHTML = "✨";
@@ -48,11 +55,29 @@ function addFloatingButton() {
         font-size:28px;
         cursor:pointer;
         z-index:999999;
+        box-shadow:
+            0 15px 35px rgba(
+                37,99,235,0.35
+            );
+        transition:all 0.25s ease;
     `;
 
-    btn.onclick = togglePanel;
+    btn.onmouseenter = () => {
+        btn.style.transform =
+            "scale(1.08)";
+    };
 
-    document.body.appendChild(btn);
+    btn.onmouseleave = () => {
+        btn.style.transform =
+            "scale(1)";
+    };
+
+    btn.onclick =
+        togglePanel;
+
+    document.body.appendChild(
+        btn
+    );
 }
 
 
@@ -60,9 +85,10 @@ function addFloatingButton() {
 // PANEL TOGGLE
 // -----------------------------
 function togglePanel() {
-    let panel = document.getElementById(
-        "sentinel-panel"
-    );
+    let panel =
+        document.getElementById(
+            "sentinel-panel"
+        );
 
     if (panel) {
         panel.remove();
@@ -84,15 +110,12 @@ function cleanEmailText(text) {
         .replace(/hide.*$/gim, "")
         .trim();
 }
-
-
 // -----------------------------
-// SINGLE SOURCE OF TRUTH
-// Extract exact visible email
+// EXTRACT CURRENT EMAIL BODY
 // -----------------------------
 function extractCurrentEmail() {
     const emailBodies = document.querySelectorAll(
-        "div.a3s.aiL, div.a3s"
+        "div.a3s.aiL"
     );
 
     if (!emailBodies.length) {
@@ -107,7 +130,9 @@ function extractCurrentEmail() {
             "\n\n";
     });
 
-    fullText = cleanEmailText(fullText);
+    fullText = cleanEmailText(
+        fullText
+    );
 
     console.log(
         "Fresh Extracted Email:",
@@ -116,7 +141,6 @@ function extractCurrentEmail() {
 
     return fullText.trim();
 }
-
 
 // -----------------------------
 // DETECT OPENED EMAIL
@@ -127,8 +151,27 @@ function detectOpenedEmail() {
         const currentThreadId =
             window.location.href;
 
+        const emailBodies =
+            document.querySelectorAll(
+                "div.a3s.aiL, div.a3s"
+            );
+
+        if (!emailBodies.length) {
+            return;
+        }
+
+        let fullText = "";
+
+        emailBodies.forEach(body => {
+            fullText +=
+                "\n" +
+                body.innerText;
+        });
+
         const text =
-            extractCurrentEmail();
+            cleanEmailText(
+                fullText
+            );
 
         if (!text) {
             return;
@@ -141,7 +184,8 @@ function detectOpenedEmail() {
         if (
             currentThreadId ===
             lastThreadId &&
-            text === selectedEmailText
+            text ===
+            selectedEmailText
         ) {
             return;
         }
@@ -149,11 +193,6 @@ function detectOpenedEmail() {
         if (analyzing) {
             return;
         }
-
-        const emailBodies =
-            document.querySelectorAll(
-                "div.a3s.aiL, div.a3s"
-            );
 
         analyzing = true;
 
@@ -184,11 +223,6 @@ function analyzeEmail(
     text,
     emailBody
 ) {
-    console.log(
-        "Sending for analysis:",
-        text
-    );
-
     fetch(
         "https://sentinel-core-q5qw.onrender.com/analyze",
         {
@@ -214,6 +248,7 @@ function analyzeEmail(
 
         removeSafePopup();
 
+        // BLOCKED MAIL
         if (
             data.status ===
             "BLOCKED"
@@ -232,6 +267,7 @@ function analyzeEmail(
             return;
         }
 
+        // SAFE / FLAGGED
         currentEmailStatus =
             data.status;
 
@@ -269,37 +305,59 @@ function blockEmail(
         container = emailBody;
     }
 
-    container.innerHTML = `
-        <div style="
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            height:80vh;
-        ">
-            <div style="
-                background:#1f2937;
-                color:white;
-                padding:25px;
-                border-radius:12px;
-                width:500px;
-                text-align:center;
-            ">
-                <h2 style="color:red;">
-                    🚫 Malicious Email Blocked
-                </h2>
+    container.innerHTML = "";
 
-                <p>
-                    <b>Detected Type:</b>
-                    ${
-                        data.types &&
-                        data.types.length
-                        ? data.types.join(", ")
-                        : "Unknown Threat"
-                    }
-                </p>
-            </div>
+    let blockUI =
+        document.createElement(
+            "div"
+        );
+
+    blockUI.style = `
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        height:80vh;
+    `;
+
+    blockUI.innerHTML = `
+        <div style="
+            background:#1f2937;
+            color:white;
+            padding:25px;
+            border-radius:12px;
+            width:500px;
+            text-align:center;
+            box-shadow:0 0 20px rgba(0,0,0,0.5);
+        ">
+            <h2 style="
+                color:red;
+                margin-bottom:15px;
+            ">
+                🚫 Malicious Email Blocked
+            </h2>
+
+            <p>
+                <b>Detected Type:</b>
+                ${
+                    data.types &&
+                    data.types.length
+                    ? data.types.join(", ")
+                    : "Unknown Threat"
+                }
+            </p>
+
+            <p style="
+                margin-top:15px;
+            ">
+                This email contains suspicious
+                instructions and has been blocked.
+            </p>
         </div>
     `;
+
+    container.appendChild(
+        blockUI
+    );
 }
 
 
@@ -310,20 +368,28 @@ function showSafePopup(status) {
     removeSafePopup();
 
     let popup =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
-    popup.id = "safe-popup";
+    popup.id =
+        "safe-popup";
+
+    let bg =
+        status === "FLAGGED"
+            ? "#f59e0b"
+            : "#22c55e";
+
+    let label =
+        status === "FLAGGED"
+            ? "⚠ Suspicious Email"
+            : "✅ Safe Email";
 
     popup.style = `
         position:fixed;
         bottom:90px;
         right:20px;
-        background:
-        ${
-            status === "FLAGGED"
-            ? "#f59e0b"
-            : "#22c55e"
-        };
+        background:${bg};
         color:white;
         padding:10px 15px;
         border-radius:8px;
@@ -332,9 +398,7 @@ function showSafePopup(status) {
     `;
 
     popup.innerText =
-        status === "FLAGGED"
-        ? "⚠ Suspicious Email"
-        : "✅ Safe Email";
+        label;
 
     document.body.appendChild(
         popup
@@ -362,13 +426,17 @@ function removeSafePopup() {
 
 
 // -----------------------------
-// CREATE PANEL
+// CREATE SMART PANEL UI
 // -----------------------------
 function createPanel() {
-    let panel =
-        document.createElement("div");
 
-    panel.id = "sentinel-panel";
+    let panel =
+        document.createElement(
+            "div"
+        );
+
+    panel.id =
+        "sentinel-panel";
 
     panel.style = `
         position: fixed;
@@ -376,49 +444,305 @@ function createPanel() {
         right: 24px;
         width: 390px;
         height: 570px;
-        background: white;
+        background: #ffffff;
+        border: 1.5px solid rgba(
+        96,165,250,0.45
+        );
+
         border-radius: 20px;
         z-index: 999999;
-        padding:20px;
+        font-family: Inter, system-ui, sans-serif;
+
+        box-shadow:
+    0 0 0 4px rgba(
+        219,234,254,0.55
+    ),
+    0 12px 30px rgba(
+        59,130,246,0.12
+    ),
+    0 24px 40px rgba(
+        15,23,42,0.08
+    );
+
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
     `;
 
     panel.innerHTML = `
-        <input id="cmd"
-        placeholder="summarize / reply"
-        />
 
-        <button id="runBtn">
-            Execute
-        </button>
+        <!-- HEADER -->
+        <div style="
+            height:78px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:0 24px;
+            border-bottom:1px solid #f1f5f9;
+        ">
 
-        <div id="statusText">
-            Ready
+            <div style="
+                display:flex;
+                align-items:center;
+                gap:14px;
+            ">
+
+                <div style="
+                    width:42px;
+                    height:42px;
+                    border-radius:12px;
+                    background:#0f172a;
+                    color:white;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-size:18px;
+                    font-weight:700;
+                ">
+                    S
+                </div>
+
+                <div>
+                    <div style="
+                        font-size:18px;
+                        font-weight:600;
+                        color:#111827;
+                    ">
+                        SmartSummarizer✨
+                    </div>
+
+                    <div style="
+                        font-size:12px;
+                        color:#64748b;
+                    ">
+                        Secure AI Assistant
+                    </div>
+                </div>
+
+            </div>
+
+            <button
+                id="close-panel"
+                style="
+                    border:none;
+                    background:none;
+                    font-size:22px;
+                    cursor:pointer;
+                    color:#64748b;
+                    opacity:0.7;
+                    transition:all 0.2s ease;
+                "
+            >
+                ×
+            </button>
+
         </div>
 
-        <div id="result">
-            No output yet.
+
+        <!-- BODY -->
+        <div style="
+            padding:22px;
+            display:flex;
+            flex-direction:column;
+            gap:18px;
+            flex:1;
+        ">
+
+            <!-- INPUT -->
+            <div>
+
+                <label style="
+                    display:block;
+                    margin-bottom:8px;
+                    color:#475569;
+                    font-size:13px;
+                    font-weight:600;
+                ">
+                    Action
+                </label>
+
+                <input
+                    id="cmd"
+                    placeholder="summarize / simplify / reply"
+                    style="
+                        width:100%;
+                        height:54px;
+                        border-radius:14px;
+                        border:1px solid #dbeafe;
+                        background:#ffffff;
+                        padding:0 16px;
+                        font-size:14px;
+                        outline:none;
+                        box-sizing:border-box;
+                        transition:all 0.2s ease;
+                    "
+                />
+
+            </div>
+
+
+            <!-- BUTTON -->
+            <button
+                id="runBtn"
+                style="
+                    width:100%;
+                    height:54px;
+                    border:none;
+                    border-radius:14px;
+                    background:#0f172a;
+                    color:white;
+                    font-size:15px;
+                    font-weight:600;
+                    cursor:pointer;
+                    transition:all 0.2s ease;
+                "
+            >
+                Execute
+            </button>
+
+
+            <!-- STATUS -->
+            <div
+                id="statusBox"
+                style="
+                    padding:16px;
+                    border-radius:14px;
+                    border:1px solid rgba(
+                        59,130,246,0.20
+                    );
+                    background:#f8fbff;
+                "
+            >
+
+                <div style="
+                    font-size:14px;
+                    font-weight:600;
+                    color:#111827;
+                    margin-bottom:6px;
+                ">
+                    Status
+                </div>
+
+                <div
+                    id="statusText"
+                    style="
+                        font-size:13px;
+                        color:#64748b;
+                    "
+                >
+                    Ready for processing
+                </div>
+
+            </div>
+
+
+            <!-- RESULT -->
+            <div
+                id="result"
+                style="
+                    flex:1;
+                    padding:18px;
+                    border-radius:16px;
+                    background:#fafcff;
+                    border:1px solid #dbeafe;
+                    color:#111827;
+                    font-size:14px;
+                    line-height:1.7;
+                    overflow-y:auto;
+                    white-space:pre-wrap;
+                    box-shadow:
+                        inset 0 1px 3px rgba(
+                            0,0,0,0.03
+                        );
+                "
+            >
+                No output yet.
+            </div>
+
         </div>
     `;
 
-    document.body.appendChild(panel);
+    document.body.appendChild(
+        panel
+    );
 
-    document.getElementById(
-        "runBtn"
-    ).onclick = runTask;
+    const closeBtn =
+        document.getElementById(
+            "close-panel"
+        );
+
+    const runBtn =
+        document.getElementById(
+            "runBtn"
+        );
+
+    const input =
+        document.getElementById(
+            "cmd"
+        );
+
+    // CLOSE BUTTON EFFECT
+    closeBtn.onmouseenter = () => {
+        closeBtn.style.opacity = "1";
+    };
+
+    closeBtn.onmouseleave = () => {
+        closeBtn.style.opacity = "0.7";
+    };
+
+    closeBtn.onclick =
+        () => panel.remove();
+
+    // BUTTON HOVER
+    runBtn.onmouseenter = () => {
+        runBtn.style.transform =
+            "translateY(-1px)";
+
+        runBtn.style.boxShadow =
+            "0 8px 18px rgba(15,23,42,0.12)";
+    };
+
+    runBtn.onmouseleave = () => {
+        runBtn.style.transform =
+            "translateY(0px)";
+
+        runBtn.style.boxShadow =
+            "none";
+    };
+
+    // INPUT FOCUS EFFECT
+    input.onfocus = () => {
+        input.style.border =
+            "1px solid #60a5fa";
+
+        input.style.boxShadow =
+            "0 0 0 4px rgba(59,130,246,0.08)";
+    };
+
+    input.onblur = () => {
+        input.style.border =
+            "1px solid #dbeafe";
+
+        input.style.boxShadow =
+            "none";
+    };
+
+    runBtn.onclick =
+        runTask;
 }
-
 
 // -----------------------------
 // RUN TASK
-// Sends exact console content
 // -----------------------------
 function runTask() {
 
     let cmd =
         document
-        .getElementById("cmd")
-        .value
-        .trim();
+            .getElementById(
+                "cmd"
+            )
+            .value
+            .trim();
 
     let output =
         document.getElementById(
@@ -431,17 +755,17 @@ function runTask() {
         );
 
     const freshEmailText =
-        extractCurrentEmail();
+    extractCurrentEmail();
 
     if (!freshEmailText) {
-        output.innerText =
-            "Open an email first.";
+      output.innerText =
+        "Open an email first.";
 
-        statusText.innerText =
-            "No email selected";
+     statusText.innerText =
+        "No email selected";
 
-        return;
-    }
+    return;
+}
 
     if (
         currentEmailStatus ===
@@ -455,11 +779,6 @@ function runTask() {
 
         return;
     }
-
-    console.log(
-        "Sending to backend:",
-        freshEmailText
-    );
 
     output.innerText =
         "Processing request...";
@@ -477,20 +796,31 @@ function runTask() {
             },
             body: JSON.stringify({
                 command: cmd,
-                email: freshEmailText
+                email:
+                    freshEmailText
             })
         }
     )
     .then(res => res.json())
     .then(data => {
+
         output.innerText =
             data.result ||
             data.error;
 
-        statusText.innerText =
-            "Completed";
+        if (
+            data.status ===
+            "SAFE"
+        ) {
+            statusText.innerText =
+                "Completed";
+        } else {
+            statusText.innerText =
+                "Blocked";
+        }
     })
     .catch(err => {
+
         console.log(
             "Task Error:",
             err
