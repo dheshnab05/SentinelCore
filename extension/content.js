@@ -110,6 +110,8 @@ function cleanEmailText(text) {
         .replace(/hide.*$/gim, "")
         .trim();
 }
+
+
 // -----------------------------
 // EXTRACT CURRENT EMAIL BODY
 // -----------------------------
@@ -142,6 +144,7 @@ function extractCurrentEmail() {
     return fullText.trim();
 }
 
+
 // -----------------------------
 // DETECT OPENED EMAIL
 // -----------------------------
@@ -151,6 +154,11 @@ function detectOpenedEmail() {
         const currentThreadId =
             window.location.href;
 
+        // UPDATED:
+        // Use same extraction method everywhere
+        const text =
+            extractCurrentEmail();
+
         const emailBodies =
             document.querySelectorAll(
                 "div.a3s.aiL, div.a3s"
@@ -159,19 +167,6 @@ function detectOpenedEmail() {
         if (!emailBodies.length) {
             return;
         }
-
-        let fullText = "";
-
-        emailBodies.forEach(body => {
-            fullText +=
-                "\n" +
-                body.innerText;
-        });
-
-        const text =
-            cleanEmailText(
-                fullText
-            );
 
         if (!text) {
             return;
@@ -681,7 +676,6 @@ function createPanel() {
             "cmd"
         );
 
-    // CLOSE BUTTON EFFECT
     closeBtn.onmouseenter = () => {
         closeBtn.style.opacity = "1";
     };
@@ -693,7 +687,6 @@ function createPanel() {
     closeBtn.onclick =
         () => panel.remove();
 
-    // BUTTON HOVER
     runBtn.onmouseenter = () => {
         runBtn.style.transform =
             "translateY(-1px)";
@@ -710,7 +703,6 @@ function createPanel() {
             "none";
     };
 
-    // INPUT FOCUS EFFECT
     input.onfocus = () => {
         input.style.border =
             "1px solid #60a5fa";
@@ -730,6 +722,7 @@ function createPanel() {
     runBtn.onclick =
         runTask;
 }
+
 
 // -----------------------------
 // RUN TASK
@@ -755,17 +748,23 @@ function runTask() {
         );
 
     const freshEmailText =
-    extractCurrentEmail();
+        extractCurrentEmail();
+
+    // ADDED:
+    console.log(
+        "Sending to backend:",
+        freshEmailText
+    );
 
     if (!freshEmailText) {
-      output.innerText =
-        "Open an email first.";
+        output.innerText =
+            "Open an email first.";
 
-     statusText.innerText =
-        "No email selected";
+        statusText.innerText =
+            "No email selected";
 
-    return;
-}
+        return;
+    }
 
     if (
         currentEmailStatus ===
