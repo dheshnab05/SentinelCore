@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 __pycache__/
 .env
 credentials.json
 token.json
 *.pyc
+=======
+token.json
+credentials.json
+>>>>>>> 9cbf90cdf29ebe3085611a0c46c80af7de1c7678
