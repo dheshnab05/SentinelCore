@@ -5,7 +5,7 @@ import re
 
 # Reusable remote Ollama client
 client = ollama.Client(
-    host="https://569e-162-216-141-56.ngrok-free.app"
+    host="https://635b-162-216-141-56.ngrok-free.app"
 )
 
 

@@ -8,25 +8,21 @@ from layers.intent_detector import detect_intent
 # ---------------------------
 def normalize_text(text):
 
-    # Join spaced words:
-    # i g n o r e -> ignore
     text = re.sub(
         r'(\b\w\s)+\w\b',
         lambda m: m.group().replace(" ", ""),
         text
     )
 
-    # Lowercase
     text = text.lower()
 
-    # Remove punctuation noise
     text = re.sub(
         r"[^\w\s+/=%@._-]",
         " ",
         text
     )
 
-    # Normalize spaces
+
     text = re.sub(
         r"\s+",
         " ",
@@ -37,7 +33,7 @@ def normalize_text(text):
 
 
 # ---------------------------
-# IMPROVED BASE64 DECODER
+# BASE64 DECODER
 # ---------------------------
 def try_decode_base64(blob):
 
@@ -51,7 +47,6 @@ def try_decode_base64(blob):
             blob
         )
 
-        # URL-safe Base64 support
         blob = blob.replace(
             "-",
             "+"
@@ -60,7 +55,6 @@ def try_decode_base64(blob):
             "/"
         )
 
-        # Fix missing padding
         missing = len(blob) % 4
         if missing:
             blob += "=" * (
@@ -77,7 +71,7 @@ def try_decode_base64(blob):
 
         decoded = decoded.strip()
 
-        # Only keep meaningful payloads
+
         if len(decoded) > 8:
             return decoded
 
@@ -211,12 +205,12 @@ def analyze_email(text):
         clean_text
     )
 
-    # Step 4: rule detection
+
     rule_score, rule_types, rule_reasons = rule_detect(
         clean_text
     )
 
-    # Step 5: semantic intent detection
+    #semantic intent detection
     intent_result = detect_intent(
         clean_text
     )
