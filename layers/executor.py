@@ -3,7 +3,7 @@ import ollama
 
 
 client = ollama.Client(
-    host="https://635b-162-216-141-56.ngrok-free.app"
+    host="https://4769-162-216-141-31.ngrok-free.app"
 )
 
 

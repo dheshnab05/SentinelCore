@@ -225,7 +225,7 @@ def analyze_email(text):
         10
     )
 
-    # Safe mail should not have low trust
+    
     if not malicious and trust_score < 8:
         trust_score = 8
 
@@ -233,7 +233,7 @@ def analyze_email(text):
     if malicious and trust_score > 5:
         trust_score = 5
 
-    # Rules override trust
+    
     if rule_score > 0:
         trust_score = min(
             trust_score,
