@@ -202,7 +202,7 @@ function detectOpenedEmail() {
             analyzeEmail(
                 text,
                 emailBodies[
-                    emailBodies.length - 1
+                emailBodies.length - 1
                 ]
             );
         }, 1200);
@@ -231,56 +231,56 @@ function analyzeEmail(
             })
         }
     )
-    .then(res => res.json())
-    .then(data => {
+        .then(res => res.json())
+        .then(data => {
 
-        console.log(
-            "Detection:",
-            data
-        );
+            console.log(
+                "Detection:",
+                data
+            );
 
-        analyzing = false;
+            analyzing = false;
 
-        removeSafePopup();
+            removeSafePopup();
 
-        // BLOCKED MAIL
-        if (
-            data.status ===
-            "BLOCKED"
-        ) {
+            // BLOCKED MAIL
+            if (
+                data.status ===
+                "BLOCKED"
+            ) {
+                currentEmailStatus =
+                    "BLOCKED";
+
+                selectedEmailText =
+                    text;
+
+                blockEmail(
+                    emailBody,
+                    data
+                );
+
+                return;
+            }
+
+            // SAFE / FLAGGED
             currentEmailStatus =
-                "BLOCKED";
+                data.status;
 
             selectedEmailText =
                 text;
 
-            blockEmail(
-                emailBody,
-                data
+            showSafePopup(
+                data.status
             );
+        })
+        .catch(err => {
+            analyzing = false;
 
-            return;
-        }
-
-        // SAFE / FLAGGED
-        currentEmailStatus =
-            data.status;
-
-        selectedEmailText =
-            text;
-
-        showSafePopup(
-            data.status
-        );
-    })
-    .catch(err => {
-        analyzing = false;
-
-        console.log(
-            "Analyze Error:",
-            err
-        );
-    });
+            console.log(
+                "Analyze Error:",
+                err
+            );
+        });
 }
 
 
@@ -333,12 +333,11 @@ function blockEmail(
 
             <p>
                 <b>Detected Type:</b>
-                ${
-                    data.types &&
-                    data.types.length
-                    ? data.types.join(", ")
-                    : "Unknown Threat"
-                }
+                ${data.types &&
+            data.types.length
+            ? data.types.join(", ")
+            : "Unknown Threat"
+        }
             </p>
 
             <p style="
@@ -758,10 +757,10 @@ function runTask() {
 
     if (!freshEmailText) {
         output.innerText =
-            "Open an email first.";
+            "Blocked";
 
         statusText.innerText =
-            "No email selected";
+            "Blocked";
 
         return;
     }
@@ -800,35 +799,35 @@ function runTask() {
             })
         }
     )
-    .then(res => res.json())
-    .then(data => {
+        .then(res => res.json())
+        .then(data => {
 
-        output.innerText =
-            data.result ||
-            data.error;
+            output.innerText =
+                data.result ||
+                data.error;
 
-        if (
-            data.status ===
-            "SAFE"
-        ) {
+            if (
+                data.status ===
+                "SAFE"
+            ) {
+                statusText.innerText =
+                    "Completed";
+            } else {
+                statusText.innerText =
+                    "Blocked";
+            }
+        })
+        .catch(err => {
+
+            console.log(
+                "Task Error:",
+                err
+            );
+
+            output.innerText =
+                "Task failed.";
+
             statusText.innerText =
-                "Completed";
-        } else {
-            statusText.innerText =
-                "Blocked";
-        }
-    })
-    .catch(err => {
-
-        console.log(
-            "Task Error:",
-            err
-        );
-
-        output.innerText =
-            "Task failed.";
-
-        statusText.innerText =
-            "Failed";
-    });
+                "Failed";
+        });
 }
