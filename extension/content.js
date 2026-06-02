@@ -757,10 +757,10 @@ function runTask() {
 
     if (!freshEmailText) {
         output.innerText =
-            "Blocked";
+            "Open an email first.";
 
         statusText.innerText =
-            "Blocked";
+            "No email selected";
 
         return;
     }
