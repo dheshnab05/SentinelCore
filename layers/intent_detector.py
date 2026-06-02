@@ -5,7 +5,7 @@ import re
 
 
 client = ollama.Client(
-    host="https://a5c1-117-250-229-185.ngrok-free.app"
+    host="https://66db-117-250-229-185.ngrok-free.app"
 )
 
 
