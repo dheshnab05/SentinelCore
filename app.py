@@ -10,8 +10,6 @@ from layers.judge import judge_output
 
 app = Flask(__name__)
 CORS(app)
-
-
 # ---------------------------
 # HOME ROUTE
 # ---------------------------
